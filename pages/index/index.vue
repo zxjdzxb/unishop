@@ -19,6 +19,7 @@
             <Recommend></Recommend>
             <Cart cardTitle="猜你喜欢"></Cart>
             <Cart cardTitle="超级进化"></Cart>
+            <CommodityList></CommodityList>
         </view>
         <view class="uview">
             uview
