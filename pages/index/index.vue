@@ -13,9 +13,10 @@
                 </u-navbar>
             </u-sticky>
         </cover-view>
-        <view style="margin-top:100rpx ;">
+        <view style="margin-top: 100rpx">
             <view>自己封装</view>
             <IndexSwiper></IndexSwiper>
+            <Recommend></Recommend>
         </view>
         <view class="uview">
             uview
