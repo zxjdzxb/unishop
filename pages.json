@@ -8,7 +8,10 @@
     "pages": [{
             "path": "pages/index/index",
             "style": {
-                "navigationStyle": "custom"
+                "navigationStyle": "custom",
+                "app-plus": {
+                    "scrollIndicator": "none"
+                }
             }
         },
         {
@@ -42,13 +45,14 @@
         "navigationBarBackgroundColor": "#ffffff",
         "backgroundColor": "#F8F8F8",
         "app-plus": {
-            "background": "#efeff4"
+            "background": "#efeff4",
+            "scrollIndicator": "none" // 在APP平台都不显示滚动条  
         }
     },
     "tabBar": {
         "color": "#636263",
         "selectedColor": "#636263",
-        "spacing": "8px",
+        // "spacing": "8px",
         "list": [{
                 "pagePath": "pages/index/index",
                 "iconPath": "static/tabbar/index.png",
