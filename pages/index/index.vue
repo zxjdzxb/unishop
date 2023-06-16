@@ -13,13 +13,15 @@
                 </u-navbar>
             </u-sticky>
         </cover-view>
-        <view style="margin-top: 100rpx">
+        <view>
             <view>自己封装</view>
             <IndexSwiper></IndexSwiper>
             <Recommend></Recommend>
             <Cart cardTitle="猜你喜欢"></Cart>
             <Cart cardTitle="超级进化"></Cart>
             <CommodityList></CommodityList>
+            <Banner></Banner>
+            <Icons></Icons>
         </view>
         <view class="uview">
             uview
@@ -38,26 +40,24 @@ export default {
     },
     onLoad() {
         //暂时根据状态栏与导航栏高度，设置弹窗距离顶部距离，大佬们若有好的方法欢迎补充！！！
-        uni.getSystemInfo({
-            success: (e) => {
-                let statusBar = 0; //状态栏高度
-                let customBar = 0; // 状态栏高度 + 导航栏高度
-
-                console.log('app-plus', e);
-                // #ifdef APP-PLUS
-                statusBar = e.statusBarHeight;
-                customBar = e.statusBarHeight + 44;
-                // #endif
-
-                // #ifdef H5
-                statusBar = 0;
-                customBar = e.statusBarHeight + 44;
-                // #endif
-                console.log('statusBar', statusBar);
-                console.log('customBar', customBar);
-                this.popupTop = customBar;
-            }
-        });
+        // uni.getSystemInfo({
+        //     success: (e) => {
+        //         let statusBar = 0; //状态栏高度
+        //         let customBar = 0; // 状态栏高度 + 导航栏高度
+        //         console.log('app-plus', e);
+        //         // #ifdef APP-PLUS
+        //         statusBar = e.statusBarHeight;
+        //         customBar = e.statusBarHeight + 44;
+        //         // #endif
+        //         // #ifdef H5
+        //         statusBar = 0;
+        //         customBar = e.statusBarHeight + 44;
+        //         // #endif
+        //         console.log('statusBar', statusBar);
+        //         console.log('customBar', customBar);
+        //         this.popupTop = customBar;
+        //     }
+        // });
     },
     methods: {}
 };
