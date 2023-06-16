@@ -1,12 +1,12 @@
 <template>
-    <view class="commodity">
+    <view class="commodity" :style="'flex-wrap:' + wrap + ';'">
         <!-- 单个商品组件 -->
 
         <view class="commodity-item" v-for="(item, index) in dataList" :key="index" :style="'width:' + itemW + ';'">
             <image class="commodity-img" :src="item.imgUrl" mode="" :style="'height:' + bigH + ';'"></image>
 
             <view class="commodity-content">
-                <text class="commodity-name">{{ item.name }}</text>
+                <text class="commodity-name" :style="'font-size:' + nameSize + ';'">{{ item.name }}</text>
                 <view>
                     <text class="pprice">¥{{ item.pprice }}</text>
                     <text class="oprice">¥{{ item.oprice }}</text>
@@ -29,6 +29,16 @@ export default {
         bigH: {
             type: String,
             default: '375rpx'
+        },
+        //是否换行
+        wrap: {
+            type: String,
+            default: 'wrap'
+        },
+        //商品文字大小
+        nameSize: {
+            type: String,
+            default: '26rpx'
         }
     },
     data() {
@@ -40,7 +50,6 @@ export default {
 <style lang="scss">
 .commodity {
     display: flex;
-    flex-wrap: wrap;
 }
 .commodity-item {
     padding-bottom: 20rpx;
@@ -52,7 +61,6 @@ export default {
     text-align: center;
 }
 .commodity-name {
-    //超出....
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

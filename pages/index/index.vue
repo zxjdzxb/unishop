@@ -23,6 +23,7 @@
             <Icons></Icons>
             <Cart cardTitle="热门推荐"></Cart>
             <Hot></Hot>
+            <Shop></Shop>
         </view>
         <view class="uview">
             <Cart cardTitle="Uview"></Cart>
