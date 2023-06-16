@@ -17,17 +17,19 @@
                 </view>
             </scroll-view>
 
-            <swiper @change="onChangeTab" :current="topBarIndex">
+            <swiper @change="onChangeTab" :current="topBarIndex" :style="'height:' + clentHeight + 'px;'">
                 <swiper-item v-for="(item, index) in topBar" :key="index">
-                    <view>{{ item.name }}</view>
+                    <view class="home-data">
+                        <view>{{ item.name }}</view>
+                        <IndexSwiper></IndexSwiper>
+                        <Recommend></Recommend>
+                        <Cart cardTitle="猜你喜欢"></Cart>
+                        <CommodityList></CommodityList>
+                        <Banner></Banner>
+                    </view>
                 </swiper-item>
             </swiper>
             <cover-view>自己封装</cover-view>
-            <IndexSwiper></IndexSwiper>
-            <Recommend></Recommend>
-            <Cart cardTitle="猜你喜欢"></Cart>
-            <CommodityList></CommodityList>
-            <Banner></Banner>
             <Icons></Icons>
             <Cart cardTitle="热门推荐"></Cart>
             <Hot></Hot>
@@ -52,12 +54,22 @@ export default {
             topBarIndex: 0,
             //顶栏跟随的索引id值
             scrollIntoIndex: 'top0',
+            clentHeight: 0,
             //顶栏数据
             topBar: [{ name: '推荐' }, { name: '运动户外' }, { name: '服饰内衣' }, { name: '鞋靴箱包' }, { name: '美妆个护' }, { name: '家居数码' }, { name: '食品母婴' }]
         };
     },
     onLoad() {
         this.navHeight = app.globalData.navHeight + 10;
+    },
+    onReady() {
+        let view = uni.createSelectorQuery().select('.home-data');
+        console.log(view);
+
+        view.boundingClientRect((data) => {
+            console.log(data);
+            this.clentHeight = data.height;
+        }).exec();
     },
     methods: {
         changeTab(index) {
