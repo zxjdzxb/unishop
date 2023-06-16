@@ -2,8 +2,9 @@
     <view class="commodity">
         <!-- 单个商品组件 -->
 
-        <view class="commodity-item" v-for="(item, index) in dataList" :key="item.id">
-            <image class="commodity-img" :src="item.imgUrl" mode=""></image>
+        <view class="commodity-item" v-for="(item, index) in dataList" :key="index" :style="'width:' + itemW + ';'">
+            <image class="commodity-img" :src="item.imgUrl" mode="" :style="'height:' + bigH + ';'"></image>
+
             <view class="commodity-content">
                 <text class="commodity-name">{{ item.name }}</text>
                 <view>
@@ -20,7 +21,15 @@
 export default {
     name: 'Commodity',
     props: {
-        dataList: Array
+        dataList: Array,
+        itemW: {
+            type: String,
+            default: '375rpx'
+        },
+        bigH: {
+            type: String,
+            default: '375rpx'
+        }
     },
     data() {
         return {};
@@ -34,12 +43,10 @@ export default {
     flex-wrap: wrap;
 }
 .commodity-item {
-    width: 375rpx;
     padding-bottom: 20rpx;
 }
 .commodity-img {
     width: 100%;
-    height: 375rpx;
 }
 .commodity-content {
     text-align: center;

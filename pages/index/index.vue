@@ -18,13 +18,14 @@
             <IndexSwiper></IndexSwiper>
             <Recommend></Recommend>
             <Cart cardTitle="猜你喜欢"></Cart>
-            <Cart cardTitle="超级进化"></Cart>
             <CommodityList></CommodityList>
             <Banner></Banner>
             <Icons></Icons>
+            <Cart cardTitle="热门推荐"></Cart>
+            <Hot></Hot>
         </view>
         <view class="uview">
-            uview
+            <Cart cardTitle="Uview"></Cart>
             <u-swiper :list="list1"></u-swiper>
         </view>
     </view>
