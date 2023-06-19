@@ -26,14 +26,14 @@
                         <Cart cardTitle="猜你喜欢"></Cart>
                         <CommodityList></CommodityList>
                         <Banner></Banner>
+                        <Icons></Icons>
+                        <Cart cardTitle="热门推荐"></Cart>
+                        <Hot></Hot>
+                        <Shop></Shop>
                     </view>
                 </swiper-item>
             </swiper>
             <cover-view>自己封装</cover-view>
-            <Icons></Icons>
-            <Cart cardTitle="热门推荐"></Cart>
-            <Hot></Hot>
-            <Shop></Shop>
         </view>
         <view class="uview">
             <Cart cardTitle="Uview"></Cart>
@@ -61,13 +61,18 @@ export default {
     },
     onLoad() {
         this.navHeight = app.globalData.navHeight + 10;
+        uni.request({
+            url: 'http://192.168.8.164:3000/api/index_list/data',
+            success: (res) => {
+                console.log(res.data.a);
+            }
+        });
     },
     onReady() {
         let view = uni.createSelectorQuery().select('.home-data');
-        console.log(view);
-
+        // console.log(view);
         view.boundingClientRect((data) => {
-            console.log(data);
+            // console.log(data);
             this.clentHeight = data.height;
         }).exec();
     },
