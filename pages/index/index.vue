@@ -2,14 +2,13 @@
     <!-- HBuilderX 2.6.3+ 新增 page-meta, 详情：https://uniapp.dcloud.io/component/page-meta -->
     <view class="container">
         <!-- 这里是状态栏 -->
-        <u-navbar title="首页" :bgColor="bgColor">
+       <u-navbar title="首页" :bgColor="bgColor">
             <view class="u-nav-slot" slot="left">
                 <u-icon name="arrow-left" size="19"></u-icon>
                 <u-line direction="column" :hairline="false" length="16" margin="0 8px"></u-line>
                 <u-icon name="home" size="20"></u-icon>
             </view>
         </u-navbar>
-
         <view class="contain" :style="'margin-top:' + navHeight + 'rpx;'">
             <scroll-view scroll-x="true" class="scroll-content" :scroll-into-view="scrollIntoIndex">
                 <view class="scroll-item" v-for="(item, index) in topBar" :key="index" :id="'top' + index" @tap="changeTab(index)">
@@ -18,27 +17,27 @@
             </scroll-view>
 
             <swiper @change="onChangeTab" :current="topBarIndex" :style="'height:' + clentHeight + 'px;'">
-                <swiper-item v-for="(item, index) in topBar" :key="index">
-                    <view class="home-data">
-                        <view>{{ item.name }}</view>
-                        <IndexSwiper></IndexSwiper>
-                        <Recommend></Recommend>
-                        <Cart cardTitle="猜你喜欢"></Cart>
-                        <CommodityList></CommodityList>
-                        <Banner></Banner>
-                        <Icons></Icons>
-                        <Cart cardTitle="热门推荐"></Cart>
-                        <Hot></Hot>
-                        <Shop></Shop>
-                    </view>
+                <swiper-item v-for="(item, index) in newTopBar" :key="index">
+                    <scroll-view scroll-y="true" :style="'height:' + clentHeight + 'px;'">
+                        <block v-if="item.data.length > 0">
+                            <block v-for="(k, i) in item.data" :key="i">
+                                <IndexSwiper v-if="k.type === 'swiperList'" :dataList="k.data"></IndexSwiper>
+                                <template v-if="k.type === 'recommendList'">
+                                    <Recommend :dataList="k.data"></Recommend>
+                                    <Card cardTitle="猜你喜欢"></Card>
+                                </template>
+                                <CommodityList v-if="k.type === 'commodityList'" :dataList="k.data"></CommodityList>
+                            </block>
+                        </block>
+                        <view v-else>暂无数据...</view>
+                    </scroll-view>
                 </swiper-item>
             </swiper>
-            <cover-view>自己封装</cover-view>
         </view>
-        <view class="uview">
+        <!--      <view class="uview">
             <Cart cardTitle="Uview"></Cart>
             <u-swiper :list="list1"></u-swiper>
-        </view>
+        </view> -->
     </view>
 </template>
 
@@ -56,27 +55,56 @@ export default {
             scrollIntoIndex: 'top0',
             clentHeight: 0,
             //顶栏数据
-            topBar: [{ name: '推荐' }, { name: '运动户外' }, { name: '服饰内衣' }, { name: '鞋靴箱包' }, { name: '美妆个护' }, { name: '家居数码' }, { name: '食品母婴' }]
+            topBar: [],
+            //承载数据
+            newTopBar: []
         };
     },
     onLoad() {
         this.navHeight = app.globalData.navHeight + 10;
-        uni.request({
-            url: 'http://192.168.8.164:3000/api/index_list/data',
+        this.__init();
+    },
+    onReady() {
+        // let view = uni.createSelectorQuery().select('.home-data');
+        // // console.log(view);
+        // view.boundingClientRect((data) => {
+        //     // console.log(data);
+        //     this.clentHeight = 2000;
+        //     // this.clentHeight = data.height;
+        // }).exec();
+        uni.getSystemInfo({
             success: (res) => {
-                console.log(res.data.a);
+                console.log(uni.upx2px(80), this.getClientHeight());
+                this.clentHeight = res.windowHeight - uni.upx2px(80) - this.getClientHeight()-88;
             }
         });
     },
-    onReady() {
-        let view = uni.createSelectorQuery().select('.home-data');
-        // console.log(view);
-        view.boundingClientRect((data) => {
-            // console.log(data);
-            this.clentHeight = data.height;
-        }).exec();
-    },
     methods: {
+        __init() {
+            uni.request({
+                url: 'http://192.168.8.164:3000/api/index_list/data',
+                success: (res) => {
+                    let data = res.data.data;
+                    console.log(data);
+                    this.topBar = data.topBar;
+                    this.newTopBar = this.initData(data);
+                }
+            });
+        },
+        initData(res) {
+            let arr = [];
+            for (let i = 0; i < this.topBar.length; i++) {
+                let obj = {
+                    data: []
+                };
+                //获取首次数据
+                if (i == 0) {
+                    obj.data = res.data;
+                }
+                arr.push(obj);
+            }
+            return arr;
+        },
         changeTab(index) {
             if (this.topBarIndex === index) {
                 return;
@@ -86,6 +114,18 @@ export default {
         },
         onChangeTab(e) {
             this.changeTab(e.detail.current);
+        },
+        //获取可视区域高度【兼容】
+        getClientHeight() {
+            const res = uni.getSystemInfoSync();
+            const system = res.platform;
+            if (system === 'ios') {
+                return 44 + res.statusBarHeight;
+            } else if (system === 'android') {
+                return 48 + res.statusBarHeight;
+            } else {
+                return 0;
+            }
         }
     }
 };

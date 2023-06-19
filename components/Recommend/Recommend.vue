@@ -1,19 +1,11 @@
 <template>
     <view class="recommend">
-        <view class="recommend-item">
-            <image class="item-big" src="../../static/img/Children.jpg" mode=""></image>
+        <view class="recommend-item" v-for="(item, index) in dataList" :key="index">
+            <image class="item-big" :src="item.bigUrl" mode=""></image>
             <view class="item-small">
-                <image class="item-img" src="../../static/img/Children1.jpg" mode=""></image>
-                <image class="item-img" src="../../static/img/Children2.jpg" mode=""></image>
-                <image class="item-img" src="../../static/img/Children3.jpg" mode=""></image>
-            </view>
-        </view>
-        <view class="recommend-item">
-            <image class="item-big" src="../../static/img/Children.jpg" mode=""></image>
-            <view class="item-small">
-                <image class="item-img" src="../../static/img/Children1.jpg" mode=""></image>
-                <image class="item-img" src="../../static/img/Children2.jpg" mode=""></image>
-                <image class="item-img" src="../../static/img/Children3.jpg" mode=""></image>
+                <block v-for="(k, i) in item.data" :key="i">
+                    <image class="item-img" :src="k.imgUrl" mode=""></image>
+                </block>
             </view>
         </view>
     </view>
@@ -22,6 +14,9 @@
 <script>
 export default {
     name: 'Recommend',
+    props: {
+        dataList: Array
+    },
     data() {
         return {};
     }

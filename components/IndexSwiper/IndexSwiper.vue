@@ -1,19 +1,9 @@
 <template>
     <view>
         <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000">
-            <swiper-item>
+            <swiper-item v-for="(item, index) in dataList" :key="index">
                 <view class="swiper-item">
-                    <image class="swiper-img" src="@/static/c1.png" mode=""></image>
-                </view>
-            </swiper-item>
-            <swiper-item>
-                <view class="swiper-item">
-                    <image class="swiper-img" src="@/static/c2.png" mode=""></image>
-                </view>
-            </swiper-item>
-            <swiper-item>
-                <view class="swiper-item">
-                    <image class="swiper-img" src="@/static/c3.png" mode=""></image>
+                    <image class="swiper-img" :src="item.imgUrl" mode=""></image>
                 </view>
             </swiper-item>
         </swiper>
@@ -23,6 +13,9 @@
 <script>
 export default {
     name: 'IndexSwiper',
+    props: {
+        dataList: Array
+    },
     data() {
         return {};
     }
