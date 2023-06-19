@@ -1,12 +1,12 @@
 <template>
     <view class="shop">
-        <view class="shop-item">
+        <view class="shop-item" v-for="(item, index) in dataList" :key="index">
             <view class="shop-big">
-                <image class="shop-big" src="../../static/img/shop.jpg" mode=""></image>
+                <image class="shop-big" :src="item.bigUrl" mode=""></image>
             </view>
             <scroll-view scroll-x="true" class="scroll-content">
                 <view class="scroll-item">
-                    <Commodity :dataList="shopList" wrap="no-wrap" itemW="200rpx" bigH="200rpx" nameSize="20rpx"></Commodity>
+                    <Commodity :dataList="item.data" wrap="no-wrap" itemW="200rpx" bigH="200rpx" nameSize="20rpx"></Commodity>
                 </view>
             </scroll-view>
         </view>
@@ -18,75 +18,11 @@ import Commodity from '../CommodityList/Commodity.vue';
 export default {
     name: 'Shop',
     components: { Commodity },
+    props: {
+        dataList: Array
+    },
     data() {
-        return {
-            shopList: [
-                {
-                    id: 1,
-                    imgUrl: '../../static/img/shop1.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 2,
-                    imgUrl: '../../static/img/shop2.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 3,
-                    imgUrl: '../../static/img/shop3.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 4,
-                    imgUrl: '../../static/img/shop4.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 1,
-                    imgUrl: '../../static/img/shop1.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 2,
-                    imgUrl: '../../static/img/shop2.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 3,
-                    imgUrl: '../../static/img/shop3.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                },
-                {
-                    id: 4,
-                    imgUrl: '../../static/img/shop4.jpg',
-                    name: '大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008大姨绒毛大款2020年必须买,不买你就不行了,爆款疯狂GG008',
-                    pprice: '299',
-                    oprice: '659',
-                    discount: '5.2'
-                }
-            ]
-        };
+        return {};
     }
 };
 </script>
