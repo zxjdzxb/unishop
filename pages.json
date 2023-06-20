@@ -8,9 +8,23 @@
     "pages": [{
             "path": "pages/index/index",
             "style": {
-                "navigationStyle": "custom",
+                "navigationBarTitleText": "百年奥莱",
+                "navigationBarBackgroundColor": "#FFFFFF",
                 "app-plus": {
-                    "scrollIndicator": "none"
+                    "scrollIndicator": "none",
+                    "titleNView": {
+                        "buttons": [{
+                                "float": "left",
+                                "fontSrc": "./static/iconfont.ttf",
+                                "text": "\ue69d"
+                            },
+                            {
+                                "float": "right",
+                                "fontSrc": "./static/iconfont.ttf",
+                                "text": "\ue622"
+                            }
+                        ]
+                    }
                 }
             }
         },

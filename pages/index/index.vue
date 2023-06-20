@@ -1,66 +1,58 @@
 <template>
     <!-- HBuilderX 2.6.3+ 新增 page-meta, 详情：https://uniapp.dcloud.io/component/page-meta -->
-    <view class="container">
-        <!-- 这里是状态栏 -->
-        <u-navbar title="首页" :bgColor="bgColor">
-            <view class="u-nav-slot" slot="left">
-                <u-icon name="arrow-left" size="19"></u-icon>
-                <u-line direction="column" :hairline="false" length="16" margin="0 8px"></u-line>
-                <u-icon name="home" size="20"></u-icon>
+    <view class="index">
+        <scroll-view scroll-x="true" class="scroll-content" :scroll-into-view="scrollIntoIndex">
+            <view :id="'top' + index" class="scroll-item" v-for="(item, index) in topBar" :key="index" @tap="changeTab(index)">
+                <text :class="topBarIndex === index ? 'f-active-color' : 'f-color'">{{ item.name }}</text>
             </view>
-        </u-navbar>
-        <view class="contain" :style="'padding-top:' + navHeight + 'rpx;'">
-            <scroll-view scroll-x="true" class="scroll-content" :scroll-into-view="scrollIntoIndex">
-                <view class="scroll-item" v-for="(item, index) in topBar" :key="index" :id="'top' + index" @tap="changeTab(index)">
-                    <text :class="topBarIndex === index ? 'f-active-color' : 'f-color'">{{ item.name }}</text>
-                </view>
-            </scroll-view>
+        </scroll-view>
 
-            <swiper @change="onChangeTab" :current="topBarIndex" :style="'height:' + clentHeight + 'px;'">
-                <swiper-item v-for="(item, index) in newTopBar" :key="index">
-                    <scroll-view scroll-y="true" :style="'height:' + clentHeight + 'px;'">
-                        <block v-if="item.data.length > 0">
-                            <block v-for="(k, i) in item.data" :key="i">
-                                <IndexSwiper v-if="k.type === 'swiperList'" :dataList="k.data"></IndexSwiper>
-                                <template v-if="k.type === 'recommendList'">
-                                    <Recommend :dataList="k.data"></Recommend>
-                                    <Card cardTitle="猜你喜欢"></Card>
-                                </template>
-                                <!--运动户外....-->
-                                <Banner v-if="k.type === 'bannerList'" :dataList="k.imgUrl"></Banner>
+        <swiper @change="onChangeTab" :current="topBarIndex" :style="'height:' + clentHeight + 'px;'">
+            <swiper-item v-for="(item, index) in newTopBar" :key="index">
+                <scroll-view scroll-y="true" :style="'height:' + clentHeight + 'px;'" @scrolltolower="DloadMore(index)">
+                    <block v-if="item.data.length > 0">
+                        <block v-for="(k, i) in item.data" :key="i">
+                            <!--推荐-->
+                            <IndexSwiper v-if="k.type === 'swiperList'" :dataList="k.data"></IndexSwiper>
+                            <template v-if="k.type === 'recommendList'">
+                                <Recommend :dataList="k.data"></Recommend>
+                                <Card cardTitle="猜你喜欢"></Card>
+                            </template>
 
-                                <template v-if="k.type === 'iconsList'">
-                                    <Icons :dataList="k.data"></Icons>
-                                    <Card cardTitle="热销爆品"></Card>
-                                </template>
+                            <!--运动户外....-->
+                            <Banner v-if="k.type === 'bannerList'" :dataList="k.imgUrl"></Banner>
 
-                                <template v-if="k.type === 'hotList'">
-                                    <Hot :dataList="k.data"></Hot>
-                                    <Card cardTitle="推荐店铺"></Card>
-                                </template>
+                            <template v-if="k.type === 'iconsList'">
+                                <Icons :dataList="k.data"></Icons>
+                                <Card cardTitle="热销爆品"></Card>
+                            </template>
 
-                                <template v-if="k.type === 'shopList'">
-                                    <Shop :dataList="k.data"></Shop>
-                                    <Card cardTitle="为您推荐"></Card>
-                                </template>
-                                <CommodityList v-if="k.type === 'commodityList'" :dataList="k.data"></CommodityList>
-                            </block>
+                            <template v-if="k.type === 'hotList'">
+                                <Hot :dataList="k.data"></Hot>
+                                <Card cardTitle="推荐店铺"></Card>
+                            </template>
+
+                            <template v-if="k.type === 'shopList'">
+                                <Shop :dataList="k.data"></Shop>
+                                <Card cardTitle="为您推荐"></Card>
+                            </template>
+
+                            <CommodityList v-if="k.type === 'commodityList'" :dataList="k.data"></CommodityList>
                         </block>
-                        <view v-else>
-                            <view class="uview">
-                                <Cart cardTitle="暂无数据"></Cart>
-                                <u-swiper :list="list1"></u-swiper>
-                            </view>
-                        </view>
-                    </scroll-view>
-                </swiper-item>
-            </swiper>
-        </view>
+                    </block>
+                    <view v-else>暂无数据...</view>
+                    <view class="load-text f-color">
+                        {{ item.loadText }}
+                    </view>
+                </scroll-view>
+            </swiper-item>
+        </swiper>
     </view>
 </template>
 
 <script>
-import { systemInfo } from '@/common/system-info.js';
+import $http from '@/common/api/request.js';
+
 const app = getApp();
 export default {
     data() {
@@ -75,45 +67,46 @@ export default {
             clentHeight: 0,
             //顶栏数据
             topBar: [],
+            page: 1,
+            isScrollToLower: false,
             //承载数据
             newTopBar: []
         };
     },
     onLoad() {
-        this.navHeight = app.globalData.navHeight + 8;
         this.__init();
     },
     onReady() {
-        // let view = uni.createSelectorQuery().select('.home-data');
-        // // console.log(view);
-        // view.boundingClientRect((data) => {
-        //     // console.log(data);
-        //     this.clentHeight = 2000;
-        //     // this.clentHeight = data.height;
-        // }).exec();
         uni.getSystemInfo({
             success: (res) => {
-                this.clentHeight = res.windowHeight - uni.upx2px(80) - this.getClientHeight() - 88;
+                this.clentHeight = res.windowHeight - uni.upx2px(80) - this.getClientHeight();
             }
         });
     },
     methods: {
         __init() {
-            uni.request({
-                url: 'http://192.168.8.164:3000/api/index_list/data',
-                success: (res) => {
-                    let data = res.data.data;
-                    this.topBar = data.topBar;
-                    this.newTopBar = this.initData(data);
-                }
-            });
+            $http
+                .request({
+                    url: '/index_list/data'
+                })
+                .then((res) => {
+                    this.topBar = res.topBar;
+                    this.newTopBar = this.initData(res);
+                })
+                .catch(() => {
+                    uni.showToast({
+                        title: '请求失败',
+                        icon: 'none'
+                    });
+                });
         },
         initData(res) {
             let arr = [];
             for (let i = 0; i < this.topBar.length; i++) {
                 let obj = {
                     data: [],
-                    load: 'first'
+                    load: 'first',
+                    loadText: '上拉加载更多...'
                 };
                 //获取首次数据
                 if (i == 0) {
@@ -150,43 +143,71 @@ export default {
             }
         },
         //对应显示不同数据
-        addData() {
+        addData(callback) {
             //拿到索引
             let index = this.topBarIndex;
-            //拿到id
+            //拿到id===>不同的板块
             let id = this.topBar[index].id;
             //请求不同的数据
-            uni.request({
-                url: 'http://192.168.8.164:3000/api/index_list/' + id + '/data/1',
-                success: (res) => {
-                    if (res.statusCode != 200) {
-                        return;
-                    } else {
-                        let data = res.data.data;
-                        this.newTopBar[index].data = [...this.newTopBar[index].data, ...data];
-                    }
-                }
-            });
+            let page = Math.ceil(this.newTopBar[index].data.length / 4) + 1;
+            $http
+                .request({
+                    url: '/index_list/' + id + '/data/' + page + ''
+                })
+                .then((res) => {
+                    this.page = page;
+                    this.newTopBar[index].data = [...this.newTopBar[index].data, ...res];
+                    console.log(this.newTopBar[index].data);
+                })
+                .catch(() => {
+                    uni.showToast({
+                        title: '请求失败',
+                        icon: 'none'
+                    });
+                });
+
             //当请求结束后，重新赋值
             this.newTopBar[index].load = 'last';
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+        },
+        //上拉加载更多
+        loadMore(index) {
+            if (this.isScrollToLower) {
+                return;
+            }
+            this.isScrollToLower = true;
+            //请求完数据 ，文字提示信息又换成【上拉加载更多...】
+            this.newTopBar[index].loadText = '加载中...';
+            this.addData(() => {
+                this.newTopBar[index].loadText = '上拉加载更多...';
+                this.isScrollToLower = false;
+            });
+        },
+        // 防抖就是「回城被打断」
+        debounce(fn, delay) {
+            let timer = null;
+            return () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fn();
+                }, delay);
+            };
+        },
+        DloadMore(index) {
+            this.debounce(this.loadMore(index), 1000);
         }
     }
 };
 </script>
 
 <style scoped lang="scss">
-.container {
-    display: flex;
-    flex-direction: column;
-    align-self: start;
-}
 .status_bar {
     height: var(--status-bar-height);
     width: 100%;
     margin: 20rpx 0;
-}
-.u-nav-slot {
-    display: flex;
 }
 .scroll-content {
     width: 100%;
@@ -202,5 +223,9 @@ export default {
     color: #49bdfb;
     padding: 10rpx 0;
     border-bottom: 6rpx solid #49bdfb;
+}
+.load-text {
+    border-top: 2rpx solid #636263;
+    line-height: 60rpx;
 }
 </style>
