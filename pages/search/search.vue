@@ -2,10 +2,10 @@
     <view class="search">
         <view class="header">
             <view class="input">
-                <u-input placeholder="搜索" prefixIcon="search" prefixIconStyle="font-size: 22px;color: #79795a" border="surround" v-model="value" @change="change"></u-input>
+                <u-input placeholder="搜索" prefixIcon="search" prefixIconStyle="font-size: 22px;color: #79795a" border="surround" v-model="keyword" @change="change"></u-input>
             </view>
             <view class="btn">
-                <u-button @click="searchList" type="primary" text="搜索"></u-button>
+                <u-button @click="search" type="primary" text="搜索"></u-button>
             </view>
         </view>
         <Lines></Lines>
@@ -13,11 +13,15 @@
             <view class="search-item">
                 <view class="search-title">
                     <view class="f-color">最近搜索</view>
-                    <view class="iconfont icon-iconset0213"></view>
+                    <view class="iconfont icon-iconset0213" @tap="clearHistory"></view>
                 </view>
                 <view>
-                    <view class="search-name f-color">四件套</view>
-                    <view class="search-name f-color">面膜</view>
+                    <view v-if="searchData.length > 0">
+                        <view class="search-name f-color" v-for="(item, index) in searchData" :key="index">
+                            {{ item }}
+                        </view>
+                    </view>
+                    <view v-else class="search-end">暂无搜索记录</view>
                 </view>
             </view>
 
@@ -44,16 +48,66 @@
 export default {
     data() {
         return {
-            value: ''
+            keyword: '',
+            //搜索过的词记录
+            searchData: []
         };
+    },
+    onLoad() {
+        uni.getStorage({
+            key: 'searchData',
+            success: (res) => {
+                this.searchData = JSON.parse(res.data);
+            }
+        });
     },
     methods: {
         change(e) {
             console.log('change', e);
         },
-        searchList() {
-            uni.navigateTo({
-                url: '../search-list/search-list'
+        search() {
+            if (this.keyword === '') {
+                return uni.showToast({
+                    title: '关键词不能为空',
+                    icon: 'none'
+                });
+            } else {
+                uni.navigateTo({
+                    url: '../search-list/search-list?keyword=' + this.keyword + ''
+                });
+            }
+            uni.hideKeyboard();
+            this.addSearch();
+        },
+        //记录最近搜索词
+        addSearch() {
+            let idx = this.searchData.indexOf(this.keyword);
+            if (idx < 0) {
+                this.searchData.unshift(this.keyword);
+            } else {
+                this.searchData.unshift(this.searchData.splice(idx, 1)[0]);
+            }
+
+            uni.setStorage({
+                key: 'searchData',
+                data: JSON.stringify(this.searchData)
+            });
+        },
+        //清除搜索记录
+        clearHistory() {
+            uni.showModal({
+                title: '重要提示',
+                content: '是否要清除搜索记录',
+                cancelText: '取消',
+                confirmText: '确定',
+                success: (res) => {
+                    if (res.confirm) {
+                        uni.removeStorage({
+                            key: 'searchData'
+                        });
+                        this.searchData = [];
+                    }
+                }
             });
         }
     }
@@ -86,6 +140,9 @@ export default {
         display: inline-block;
         border-radius: 26rpx;
         margin: 10rpx;
+    }
+    .search-end {
+        text-align: center;
     }
 }
 </style>
