@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var connection = require('../db/sql.js');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -7,6 +8,30 @@ router.get('/', function(req, res, next) {
         title: 'Express'
     });
 });
+
+
+router.get("/api/goods/search", function(req, res, next) {
+    //desc降序     asc升序
+    //获取对象的key
+    let [goodsName, orderName] = Object.keys(req.query);
+    //name参数的值
+    let name = req.query.name;
+    //orderName的key的值
+    let order = req.query[orderName];
+
+    connection.query("select * from goods_search where name like '%" + name + "%' order by " + orderName + " " +
+        order + "",
+        function(error, results, fields) {
+            if (error) throw error;
+            res.send({
+                code: "0",
+                data: results
+            })
+        });
+
+});
+
+
 
 //首次第一次触底的数据
 router.get('/api/index_list/1/data/2', function(req, res, next) {

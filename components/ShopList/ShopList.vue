@@ -1,7 +1,6 @@
 <template>
     <view>
         <view class="shop-list">
-            {{ keyword }}
             <view class="shop-title f-color">
                 <view class="shop-item" v-for="(item, index) in shopList.data" :key="index" @tap="changTab(index)">
                     <view :class="shopList.currentIndex == index ? 'f-active-color' : ''">{{ item.name }}</view>
@@ -20,6 +19,7 @@
 <script>
 import Lines from '@/components/Lines/Lines.vue';
 import CommodityList from '@/components/CommodityList/CommodityList.vue';
+import $http from '@/common/api/request.js';
 export default {
     name: 'ShopList',
     props: {
@@ -30,8 +30,8 @@ export default {
             shopList: {
                 currentIndex: 0,
                 data: [
-                    { name: '价格', status: 1 },
-                    { name: '折扣', status: 0 },
+                    { name: '价格', status: 1, key: 'pprice' },
+                    { name: '折扣', status: 0, key: 'discount' },
                     { name: '品牌', status: 0 }
                 ]
             },
@@ -71,12 +71,47 @@ export default {
             ]
         };
     },
+    computed: {
+        orderBy() {
+            //拿到当前对象
+            let obj = this.shopList.data[this.shopList.currentIndex];
+            let val = obj.status === '1' ? 'asc' : 'desc';
+            return {
+                [obj.key]: val
+            };
+        }
+    },
     components: {
         Lines,
         CommodityList
     },
+    mounted() {
+        this.getData();
+    },
     methods: {
+        //请求数据数据
+        getData() {
+            $http
+                .request({
+                    url: '/goods/search',
+                    data: {
+                        name: this.keyword,
+                        ...this.orderBy
+                    }
+                })
+                .then((res) => {
+                    this.dataList = res;
+                })
+                .catch(() => {
+                    uni.showToast({
+                        title: '请求失败',
+                        icon: 'none'
+                    });
+                });
+        },
         changTab(index) {
+            //点击排序==》重新请求了数据
+            this.getData();
             //索引值
             let idx = this.shopList.currentIndex;
             //具体哪一个对象

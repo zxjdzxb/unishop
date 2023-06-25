@@ -17,7 +17,7 @@
                 </view>
                 <view>
                     <view v-if="searchData.length > 0">
-                        <view class="search-name f-color" v-for="(item, index) in searchData" :key="index">
+                        <view class="search-name f-color" v-for="(item, index) in searchData" :key="index" @tap="toSearchList(item)">
                             {{ item }}
                         </view>
                     </view>
@@ -72,9 +72,7 @@ export default {
                     icon: 'none'
                 });
             } else {
-                uni.navigateTo({
-                    url: '../search-list/search-list?keyword=' + this.keyword + ''
-                });
+                this.toSearchList(this.keyword);
             }
             uni.hideKeyboard();
             this.addSearch();
@@ -108,6 +106,12 @@ export default {
                         this.searchData = [];
                     }
                 }
+            });
+        },
+        //点击搜索记录进入页面
+        toSearchList(item) {
+            uni.navigateTo({
+                url: '../search-list/search-list?keyword=' + item + ''
             });
         }
     }
